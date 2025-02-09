@@ -27,6 +27,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            flex-direction: column; /* Adicionando flex-direction para posicionar o footer abaixo */
         }
 
         .form-container {
@@ -80,6 +81,18 @@
         .forgot-password:hover {
             text-decoration: underline;
         }
+
+        /* Rodapé */
+        footer {
+            background: var(--primary);
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+        }
+
     </style>
 </head>
 <body>
@@ -98,6 +111,11 @@
 
     <a href="recuperacao.html" class="forgot-password">Esqueceu sua senha?</a>
 </div>
+
+<!-- Rodapé -->
+<footer>
+    <p>&copy; 2025 Governo Digital Moçambique. Todos os direitos reservados.</p>
+</footer>
 
 </body>
 </html>
