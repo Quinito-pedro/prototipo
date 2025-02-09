@@ -29,9 +29,9 @@
             line-height: 1.6;
         }
 
-        /* Navbar */
+        /* Navbar com fundo das cores da bandeira de Moçambique */
         nav {
-            background: var(--primary);
+            background: linear-gradient(90deg, #007847 25%, #000 25%, #000 50%, #ffce00 50%, #ffce00 75%, #d21034 75%);
             padding: 1rem;
             text-align: center;
         }
@@ -48,7 +48,7 @@
             text-decoration: underline;
         }
 
-        /* Header */
+        /* Header com fundo das cores da bandeira no título */
         header {
             background: url('imagemfundo.jpg') no-repeat center center/cover;
             color: white;
@@ -75,7 +75,11 @@
         }
 
         .hero h1 {
+            background: linear-gradient(90deg, #007847 25%, #000 25%, #000 50%, #ffce00 50%, #ffce00 75%, #d21034 75%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             font-size: 2.5rem;
+            font-weight: bold;
         }
 
         .hero p {
@@ -258,4 +262,3 @@
 
 </body>
 </html>
-
