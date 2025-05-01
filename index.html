@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Governo Digital de Moçambique</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #6a11cb, #2575fc);
+      color: white;
+      height: 100%;
+    }
+
+    /* Estilo comum */
+    input, select, textarea, button {
+      font-family: inherit;
+    }
+
+    h1, h2, h3 {
+      margin: 0;
+    }
+
+    a {
+      color: #aadfff;
+      text-decoration: underline;
+    }
+
+    /* Container login/cadastro */
+    .form-container {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 30px;
+      border-radius: 10px;
+      max-width: 400px;
+      width: 90%;
+      margin: 80px auto;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 6px;
+      background: #333;
+      color: white;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      background-color: #2575fc;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #6a11cb;
+    }
+
+    .toggle-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .link {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    /* Portal */
+    .container {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      animation: fadeIn 0.8s ease-in-out;
+    }
+
+    .botoes-tratamento {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+      margin: 30px 0;
+    }
+
+    .botoes-tratamento button {
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+
+    .suporte-container {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 25px;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 700px;
+      margin-top: 40px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .mostrar-suporte-btn {
+      padding: 12px 25px;
+      margin-top: 20px;
+    }
+
+    footer {
+      background-color: rgba(0, 0, 0, 0.8);
+      color: white;
+      text-align: center;
+      padding: 20px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+
+    header {
+      display: none;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 20px;
+      text-align: center;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN/CADASTRO -->
+  <div class="form-container" id="auth">
+    <div class="toggle-buttons">
+      <button onclick="showCadastro()" id="cadastroButton">Cadastrar</button>
+      <button onclick="showLogin()" id="loginButton" style="display:none;">Login</button>
+    </div>
+
+    <div id="cadastro" style="display: none;">
+      <h2>Cadastro</h2>
+      <form onsubmit="event.preventDefault(); cadastrarUsuario();">
+        <input type="text" id="cadastroNome" placeholder="Nome Completo" required>
+        <input type="email" id="cadastroEmail" placeholder="Email" required>
+        <input type="password" id="cadastroPassword" placeholder="Senha" required>
+        <input type="password" id="cadastroConfirmPassword" placeholder="Confirmar Senha" required>
+        <button type="submit">Cadastrar</button>
+      </form>
+    </div>
+
+    <div id="login">
+      <h2>Login</h2>
+      <form onsubmit="event.preventDefault(); fazerLogin();">
+        <input type="email" id="loginEmail" placeholder="Email" required>
+        <input type="password" id="loginSenha" placeholder="Senha" required>
+        <button type="submit">Entrar</button>
+      </form>
+    </div>
+
+    <div class="link">
+      <a href="#" onclick="recuperarSenha()">Esqueceu a senha?</a>
+    </div>
+  </div>
+
+  <!-- PORTAL DE SERVIÇOS -->
+  <header id="portalHeader">
+    <h1 id="boasVindas">Bem-vindo ao Governo Digital de Moçambique</h1>
+  </header>
+
+  <div class="container" id="portal">
+    <div class="botoes-tratamento">
+      <button onclick="window.open('https://www.dnic.gov.mz/', '_blank')">Tratar BI</button>
+      <button onclick="window.open('https://www.at.gov.mz/', '_blank')">Tratar NUIT</button>
+      <button onclick="window.open('https://sigav.senami.gov.mz/', '_blank')">Tratar Passaporte</button>
+      <button onclick="window.open('https://www.balcaovirtual.inatro.gov.mz/', '_blank')">Tratar Carta de Condução</button>
+    </div>
+
+    <p style="text-align: center; max-width: 700px;">Você será redirecionado para os sites oficiais das instituições do Governo de Moçambique.</p>
+    <div class="form-container">
+        <h2>Renovar Documento</h2>
+        <form id="solicitacaoForm" onsubmit="enviarSolicitacao(event)">
+          <select id="tipoDocumento" required>
+            <option value="">Tipo de Documento</option>
+            <option value="NUIT">NUIT</option>
+            <option value="BI">Bilhete de Identidade</option>
+            <option value="Carta de Condução">Carta de Condução</option>
+            <option value="Passaporte">Passaporte</option>
+          </select>
+      
+          <input type="text" id="nome" placeholder="Nome Completo" required>
+          <input type="date" id="dataNascimento" required>
+          <select id="genero" required>
+            <option value="">Gênero</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Feminino">Feminino</option>
+            <option value="Outro">Outro</option>
+          </select>
+      
+          <input type="text" id="nacionalidade" placeholder="Nacionalidade" required>
+          <textarea id="detalhes" placeholder="Informações Adicionais" rows="4" required></textarea>
+      
+          <button type="submit">Enviar Solicitação</button>
+          <button type="button" class="mostrar-suporte-btn" onclick="mostrarSuporte()">Suporte Técnico</button>
+        </form>
+      </div>
+      
+      <div id="suporte" class="suporte-container" style="display: none;">
+        <h3>Suporte Técnico</h3>
+        <ul>
+          <li><strong>BI:</strong> <a href="https://www.dnic.gov.mz/" target="_blank">www.dnic.gov.mz</a></li>
+          <li><strong>NUIT:</strong> <a href="https://www.at.gov.mz/" target="_blank">www.at.gov.mz</a></li>
+          <li><strong>Carta:</strong> <a href="https://www.balcaovirtual.inatro.gov.mz/" target="_blank">INATRO</a></li>
+          <li><strong>Passaporte:</strong> <a href="https://sigav.senami.gov.mz/" target="_blank">SENAMI</a></li>
+        </ul>
+        <p><strong>Horário:</strong> Segunda a Sexta-feira, 8h–17h</p>
+        <p><strong>Telefone:</strong> +258 84 4909293</p>
+      </div>
+      
+  </div>
+
+  <footer>
+    © Todos os direitos reservados – Governo de Moçambique.
+  </footer>
+
+  <script>
+    function showCadastro() {
+      document.getElementById("cadastro").style.display = "block";
+      document.getElementById("login").style.display = "none";
+      document.getElementById("cadastroButton").style.display = "none";
+      document.getElementById("loginButton").style.display = "inline-block";
+    }
+
+    function showLogin() {
+      document.getElementById("cadastro").style.display = "none";
+      document.getElementById("login").style.display = "block";
+      document.getElementById("cadastroButton").style.display = "inline-block";
+      document.getElementById("loginButton").style.display = "none";
+    }
+
+    function recuperarSenha() {
+      alert("Funcionalidade de recuperação de senha ainda não implementada.");
+    }
+
+    function cadastrarUsuario() {
+      const nome = document.getElementById('cadastroNome').value.trim();
+      const email = document.getElementById('cadastroEmail').value.trim().toLowerCase();
+      const senha = document.getElementById('cadastroPassword').value.trim();
+      const confirmSenha = document.getElementById('cadastroConfirmPassword').value.trim();
+
+      if (!nome || !email || !senha || !confirmSenha) return alert("Preencha todos os campos");
+      if (senha !== confirmSenha) return alert("As senhas não coincidem");
+
+      const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+      if (usuarios.find(u => u.email === email)) return alert("Este email já está cadastrado!");
+
+      usuarios.push({ nome, email, senha });
+      localStorage.setItem('usuarios', JSON.stringify(usuarios));
+      localStorage.setItem('logado', 'true');
+      localStorage.setItem('usuario', JSON.stringify({ nome }));
+      acessarPortal(nome);
+    }
+
+    function fazerLogin() {
+      const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+      const senha = document.getElementById('loginSenha').value.trim();
+
+      if (!email || !senha) return alert("Preencha todos os campos");
+
+      const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+      const usuario = usuarios.find(u => u.email === email && u.senha === senha);
+
+      if (usuario) {
+        localStorage.setItem('logado', 'true');
+        localStorage.setItem('usuario', JSON.stringify({ nome: usuario.nome }));
+        acessarPortal(usuario.nome);
+      } else {
+        alert("Email ou senha incorretos!");
+      }
+    }
+
+    function acessarPortal(nome) {
+      document.getElementById("auth").style.display = "none";
+      document.getElementById("portal").style.display = "flex";
+      document.getElementById("portalHeader").style.display = "block";
+      document.getElementById("boasVindas").textContent = `Bem-vindo ao Governo Digital de Moçambique, ${nome}`;
+    }
+
+    function mostrarSuporte() {
+      const suporte = document.getElementById('suporte');
+      suporte.style.display = suporte.style.display === 'none' ? 'block' : 'none';
+    }
+
+    async function enviarSolicitacao(event) {
+      event.preventDefault();
+      const tipoDocumento = document.getElementById('tipoDocumento').value;
+      const nome = document.getElementById('nome').value.trim();
+      const dataNascimento = document.getElementById('dataNascimento').value;
+      const genero = document.getElementById('genero').value;
+      const nacionalidade = document.getElementById('nacionalidade').value.trim();
+      const detalhes = document.getElementById('detalhes').value.trim();
+
+      const confirmacao = confirm(`📄 Tipo: ${tipoDocumento}\n👤 Nome: ${nome}\n📅 Nascimento: ${dataNascimento}\n⚥ Gênero: ${genero}\n🌍 Nacionalidade: ${nacionalidade}\n📝 Detalhes: ${detalhes}`);
+      if (!confirmacao) return alert("❌ Solicitação cancelada.");
+
+      alert("✅ Solicitação enviada com sucesso!");
+      document.getElementById('solicitacaoForm').reset();
+    }
+
+    // Mostrar login por padrão
+    showLogin();
+  </script>
+</body>
+</html>
+
