@@ -229,7 +229,7 @@
       <button onclick="window.open('https://www.at.gov.mz/', '_blank')">Tratar NUIT</button>
       <button onclick="window.open('https://sigav.senami.gov.mz/', '_blank')">Tratar Passaporte</button>
       <button onclick="window.open('https://www.balcaovirtual.inatro.gov.mz/', '_blank')">Tratar Carta de Condução</button>
-    </div>
+  </div>
 
     <p style="text-align: center; max-width: 700px;">Você será redirecionado para os sites oficiais das instituições do Governo de Moçambique.</p>
 
@@ -267,6 +267,7 @@
 
         <button type="submit">Enviar Solicitação</button>
         <button type="button" class="mostrar-suporte-btn" onclick="mostrarSuporte()">Suporte Técnico</button>
+         <button onclick="logout()">Sair</button>
       </form>
     </div>
 
@@ -368,6 +369,11 @@
       alert("✅ Solicitação enviada com sucesso!");
       document.getElementById('solicitacaoForm').reset();
     }
+    function logout() {
+  localStorage.clear();
+  location.reload();
+}
+
 
     function togglePassword(id, el) {
       const input = document.getElementById(id);
