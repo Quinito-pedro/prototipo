@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Governo Digital de Moçambique</title>
-  <link rel="shortcut icon" href="Jhon02.png" type="image/x-icon">
   <style>
     body {
       margin: 0;
@@ -14,7 +13,6 @@
       height: 100%;
     }
 
-    /* Estilo comum */
     input, select, textarea, button {
       font-family: inherit;
     }
@@ -28,7 +26,6 @@
       text-decoration: underline;
     }
 
-    /* Container login/cadastro */
     .form-container {
       background: rgba(0, 0, 0, 0.7);
       padding: 30px;
@@ -38,14 +35,26 @@
       margin: 80px auto;
     }
 
+    label {
+      display: block;
+      margin-top: 10px;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+
     input, select, textarea {
       width: 100%;
       padding: 10px;
-      margin: 10px 0;
+      margin-bottom: 10px;
       border: none;
       border-radius: 6px;
       background: #333;
       color: white;
+      box-sizing: border-box;
+    }
+
+    textarea {
+      resize: vertical;
     }
 
     button {
@@ -76,7 +85,6 @@
       margin-top: 10px;
     }
 
-    /* Portal */
     .container {
       display: none;
       flex-direction: column;
@@ -130,6 +138,25 @@
       text-align: center;
     }
 
+    .toggle-password {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #ccc;
+      font-size: 16px;
+      user-select: none;
+    }
+
+    .toggle-password:hover {
+      color: white;
+    }
+
+    .password-container {
+      position: relative;
+    }
+
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
@@ -148,10 +175,24 @@
     <div id="cadastro" style="display: none;">
       <h2>Cadastro</h2>
       <form onsubmit="event.preventDefault(); cadastrarUsuario();">
+        <label for="cadastroNome">Nome Completo</label>
         <input type="text" id="cadastroNome" placeholder="Nome Completo" required>
+
+        <label for="cadastroEmail">Email</label>
         <input type="email" id="cadastroEmail" placeholder="Email" required>
-        <input type="password" id="cadastroPassword" placeholder="Senha" required>
-        <input type="password" id="cadastroConfirmPassword" placeholder="Confirmar Senha" required>
+
+        <label for="cadastroPassword">Senha</label>
+        <div class="password-container">
+          <input type="password" id="cadastroPassword" placeholder="Senha" required>
+          <span class="toggle-password" onclick="togglePassword('cadastroPassword', this)">👁️</span>
+        </div>
+
+        <label for="cadastroConfirmPassword">Confirmar Senha</label>
+        <div class="password-container">
+          <input type="password" id="cadastroConfirmPassword" placeholder="Confirmar Senha" required>
+          <span class="toggle-password" onclick="togglePassword('cadastroConfirmPassword', this)">👁️</span>
+        </div>
+
         <button type="submit">Cadastrar</button>
       </form>
     </div>
@@ -159,8 +200,15 @@
     <div id="login">
       <h2>Login</h2>
       <form onsubmit="event.preventDefault(); fazerLogin();">
+        <label for="loginEmail">Email</label>
         <input type="email" id="loginEmail" placeholder="Email" required>
-        <input type="password" id="loginSenha" placeholder="Senha" required>
+
+        <label for="loginSenha">Senha</label>
+        <div class="password-container">
+          <input type="password" id="loginSenha" placeholder="Senha" required>
+          <span class="toggle-password" onclick="togglePassword('loginSenha', this)">👁️</span>
+        </div>
+
         <button type="submit">Entrar</button>
       </form>
     </div>
@@ -184,51 +232,58 @@
     </div>
 
     <p style="text-align: center; max-width: 700px;">Você será redirecionado para os sites oficiais das instituições do Governo de Moçambique.</p>
+
     <div class="form-container">
-        <h2>Renovar Documento</h2>
-        <form id="solicitacaoForm" onsubmit="enviarSolicitacao(event)">
-          <select id="tipoDocumento" required>
-            <option value="">Tipo de Documento</option>
-            <option value="NUIT">NUIT</option>
-            <option value="BI">Bilhete de Identidade</option>
-            <option value="Carta de Condução">Carta de Condução</option>
-            <option value="Passaporte">Passaporte</option>
-          </select>
-      
-          <input type="text" id="nome" placeholder="Nome Completo" required>
-          <input type="date" id="dataNascimento" required>
-          <select id="genero" required>
-            <option value="">Gênero</option>
-            <option value="Masculino">Masculino</option>
-            <option value="Feminino">Feminino</option>
-            <option value="Outro">Outro</option>
-          </select>
-      
-          <input type="text" id="nacionalidade" placeholder="Nacionalidade" required>
-          <textarea id="detalhes" placeholder="Informações Adicionais" rows="4" required></textarea>
-      
-          <button type="submit">Enviar Solicitação</button>
-          <button type="button" class="mostrar-suporte-btn" onclick="mostrarSuporte()">Suporte Técnico</button>
-        </form>
-      </div>
-      
-      <div id="suporte" class="suporte-container" style="display: none;">
-        <h3>Suporte Técnico</h3>
-        <ul>
-          <li><strong>BI:</strong> <a href="https://www.dnic.gov.mz/" target="_blank">www.dnic.gov.mz</a></li>
-          <li><strong>NUIT:</strong> <a href="https://www.at.gov.mz/" target="_blank">www.at.gov.mz</a></li>
-          <li><strong>Carta:</strong> <a href="https://www.balcaovirtual.inatro.gov.mz/" target="_blank">INATRO</a></li>
-          <li><strong>Passaporte:</strong> <a href="https://sigav.senami.gov.mz/" target="_blank">SENAMI</a></li>
-        </ul>
-        <p><strong>Horário:</strong> Segunda a Sexta-feira, 8h–17h</p>
-        <p><strong>Telefone:</strong> +258 84 4909293</p>
-      </div>
-      
+      <h2>Renovar Documento</h2>
+      <form id="solicitacaoForm" onsubmit="enviarSolicitacao(event)">
+        <label for="tipoDocumento">Tipo de Documento</label>
+        <select id="tipoDocumento" required>
+          <option value="">Selecione o tipo de documento</option>
+          <option value="NUIT">NUIT</option>
+          <option value="BI">Bilhete de Identidade</option>
+          <option value="Carta de Condução">Carta de Condução</option>
+          <option value="Passaporte">Passaporte</option>
+        </select>
+
+        <label for="nome">Nome Completo</label>
+        <input type="text" id="nome" placeholder="Digite seu nome completo" required>
+
+        <label for="dataNascimento">Data de Nascimento</label>
+        <input type="date" id="dataNascimento" required>
+
+        <label for="genero">Gênero</label>
+        <select id="genero" required>
+          <option value="">Selecione seu gênero</option>
+          <option value="Masculino">Masculino</option>
+          <option value="Feminino">Feminino</option>
+          <option value="Outro">Outro</option>
+        </select>
+
+        <label for="nacionalidade">Nacionalidade</label>
+        <input type="text" id="nacionalidade" placeholder="Ex: Moçambicana" required>
+
+        <label for="detalhes">Informações Adicionais</label>
+        <textarea id="detalhes" placeholder="Informe detalhes relevantes" rows="4" required></textarea>
+
+        <button type="submit">Enviar Solicitação</button>
+        <button type="button" class="mostrar-suporte-btn" onclick="mostrarSuporte()">Suporte Técnico</button>
+      </form>
+    </div>
+
+    <div id="suporte" class="suporte-container" style="display: none;">
+      <h3>Suporte Técnico</h3>
+      <ul>
+        <li><strong>BI:</strong> <a href="https://www.dnic.gov.mz/" target="_blank">www.dnic.gov.mz</a></li>
+        <li><strong>NUIT:</strong> <a href="https://www.at.gov.mz/" target="_blank">www.at.gov.mz</a></li>
+        <li><strong>Carta:</strong> <a href="https://www.balcaovirtual.inatro.gov.mz/" target="_blank">INATRO</a></li>
+        <li><strong>Passaporte:</strong> <a href="https://sigav.senami.gov.mz/" target="_blank">SENAMI</a></li>
+      </ul>
+      <p><strong>Horário:</strong> Segunda a Sexta-feira, 8h–17h</p>
+      <p><strong>Telefone:</strong> +258 84 4909293</p>
+    </div>
   </div>
 
-  <footer>
-    © Todos os direitos reservados – Governo de Moçambique.
-  </footer>
+  <footer>© Todos os direitos reservados – Governo de Moçambique.</footer>
 
   <script>
     function showCadastro() {
@@ -252,8 +307,8 @@
     function cadastrarUsuario() {
       const nome = document.getElementById('cadastroNome').value.trim();
       const email = document.getElementById('cadastroEmail').value.trim().toLowerCase();
-      const senha = document.getElementById('cadastroPassword').value.trim();
-      const confirmSenha = document.getElementById('cadastroConfirmPassword').value.trim();
+      const senha = document.getElementById('cadastroPassword').value;
+      const confirmSenha = document.getElementById('cadastroConfirmPassword').value;
 
       if (!nome || !email || !senha || !confirmSenha) return alert("Preencha todos os campos");
       if (senha !== confirmSenha) return alert("As senhas não coincidem");
@@ -270,7 +325,7 @@
 
     function fazerLogin() {
       const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-      const senha = document.getElementById('loginSenha').value.trim();
+      const senha = document.getElementById('loginSenha').value;
 
       if (!email || !senha) return alert("Preencha todos os campos");
 
@@ -298,7 +353,7 @@
       suporte.style.display = suporte.style.display === 'none' ? 'block' : 'none';
     }
 
-    async function enviarSolicitacao(event) {
+    function enviarSolicitacao(event) {
       event.preventDefault();
       const tipoDocumento = document.getElementById('tipoDocumento').value;
       const nome = document.getElementById('nome').value.trim();
@@ -314,9 +369,15 @@
       document.getElementById('solicitacaoForm').reset();
     }
 
-    // Mostrar login por padrão
+    function togglePassword(id, el) {
+      const input = document.getElementById(id);
+      const isHidden = input.type === 'password';
+      input.type = isHidden ? 'text' : 'password';
+      el.textContent = isHidden ? '🙈' : '👁️';
+    }
+
+    // Exibir tela de login por padrão
     showLogin();
   </script>
 </body>
 </html>
-
