@@ -123,7 +123,7 @@
       background-color: #dc2626;
     }
 
-    /* SISTEMA DE NOTIFICAÇÃO CUSTOMIZADO */
+    /* SISTEMA DE NOTIFICAÇÃO CUSTOMIZADO (TOAST) */
     .toast-container {
       position: fixed;
       top: 24px;
@@ -148,6 +148,7 @@
 
     .toast.success { border-left-color: var(--accent); }
     .toast.error { border-left-color: #ef4444; }
+    .toast.info { border-left-color: var(--accent-gold); }
 
     /* ==========================================
        LAYOUT - HEADER & FOOTER
@@ -203,6 +204,7 @@
     .user-info {
       font-size: 0.9rem;
       color: #cbd5e1;
+      font-weight: 600;
     }
 
     footer {
@@ -216,7 +218,7 @@
     }
 
     /* ==========================================
-       TELA DE AUTENTICAÇÃO (LOGIN / CADASTRO)
+       TELA DE AUTENTICAÇÃO (LOGIN / CADASTRO / RECUPERAÇÃO)
        ========================================== */
     .auth-wrapper {
       flex: 1;
@@ -301,6 +303,17 @@
       font-size: 0.875rem;
     }
 
+    .result-box {
+      background-color: #fffbeb;
+      border: 1px solid #fef3c7;
+      padding: 14px;
+      border-radius: var(--radius);
+      margin-top: 15px;
+      color: #92400e;
+      font-size: 0.9rem;
+      word-break: break-all;
+    }
+
     /* ==========================================
        PORTAL PRINCIPAL / DASHBOARD
        ========================================== */
@@ -324,7 +337,6 @@
       gap: 10px;
     }
 
-    /* Grade de Links de Acesso Rápido */
     .quick-access-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -361,17 +373,9 @@
       color: var(--primary-light);
     }
 
-    .service-card h3 {
-      font-size: 1.1rem;
-      color: var(--primary);
-    }
+    .service-card h3 { font-size: 1.1rem; color: var(--primary); }
+    .service-card p { font-size: 0.875rem; color: var(--text-muted); }
 
-    .service-card p {
-      font-size: 0.875rem;
-      color: var(--text-muted);
-    }
-
-    /* Form Area & Grid de Inputs */
     .form-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
@@ -388,12 +392,8 @@
     }
 
     @media(min-width: 768px) {
-      .form-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      .full-width {
-        grid-column: span 2;
-      }
+      .form-grid { grid-template-columns: repeat(2, 1fr); }
+      .full-width { grid-column: span 2; }
     }
 
     .form-actions {
@@ -402,7 +402,6 @@
       flex-wrap: wrap;
     }
 
-    /* Suporte e FAQ */
     .support-section {
       background: #edf2f7;
       border-radius: var(--radius);
@@ -417,13 +416,9 @@
       margin-top: 16px;
     }
 
-    .support-item h4 {
-      font-size: 0.95rem;
-      color: var(--primary);
-      margin-bottom: 4px;
-    }
+    .support-item h4 { font-size: 0.95rem; color: var(--primary); margin-bottom: 4px; }
 
-    /* Modal de Confirmação */
+    /* MODAL DE CONFIRMAÇÃO */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -450,7 +445,6 @@
     .modal-content { font-size: 0.95rem; margin-bottom: 24px; color: var(--text-main); }
     .modal-buttons { display: flex; justify-content: flex-end; gap: 12px; }
 
-    /* Animações */
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
@@ -480,10 +474,10 @@
     <div class="header-container">
       <div class="logo-area">
         <div class="logo-emblema">🇲🇿</div>
-        <h1 id="boasVindas">Governo Digital de Moçambique</h1>
+        <h1>Governo Digital de Moçambique</h1>
       </div>
       <div class="user-menu">
-        <span class="user-info" id="userNameDisplay">---</span>
+        <span class="user-info" id="userNameDisplay">Ligado como: Mário</span>
         <button class="btn-danger" style="padding: 8px 16px; font-size: 0.85rem;" onclick="logout()">Sair</button>
       </div>
     </div>
@@ -491,7 +485,7 @@
 
   <div class="auth-wrapper" id="authSection">
     <div class="auth-card">
-      <div class="auth-tabs">
+      <div class="auth-tabs" id="authTabsHeader">
         <button class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')">Entrar</button>
         <button class="auth-tab" id="tabCadastro" onclick="switchAuthTab('cadastro')">Criar Conta</button>
       </div>
@@ -500,7 +494,7 @@
         <div id="loginView">
           <form onsubmit="event.preventDefault(); fazerLogin();">
             <div class="auth-form-group">
-              <label for="loginEmail">E-mail Institucional ou Cidadão</label>
+              <label for="loginEmail">E-mail Registado</label>
               <input type="email" id="loginEmail" placeholder="exemplo@dominio.com" required>
             </div>
             <div class="auth-form-group">
@@ -513,7 +507,7 @@
             <button type="submit" class="btn-primary" style="width: 100%; margin-top: 8px;">Autenticar no Portal</button>
           </form>
           <div class="auth-footer">
-            <a href="#" onclick="recuperarSenha(event)">Esqueceu a palavra-passe?</a>
+            <a href="#" onclick="switchAuthTab('recuperar')">Esqueceu a palavra-passe?</a>
           </div>
         </div>
 
@@ -521,7 +515,7 @@
           <form onsubmit="event.preventDefault(); cadastrarUsuario();">
             <div class="auth-form-group">
               <label for="cadastroNome">Nome Completo</label>
-              <input type="text" id="cadastroNome" placeholder="Como consta no BI" required>
+              <input type="text" id="cadastroNome" placeholder="Ex: António Bernardo" required>
             </div>
             <div class="auth-form-group">
               <label for="cadastroEmail">Endereço de E-mail</label>
@@ -544,6 +538,26 @@
             <button type="submit" class="btn-primary" style="width: 100%;">Criar Conta Governamental</button>
           </form>
         </div>
+
+        <div id="recuperarView" style="display: none;">
+          <h3 style="margin-bottom: 12px; font-size: 1.1rem; color: var(--primary);">Recuperar Acesso</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;">Introduza o e-mail associado à sua conta para reaver as suas credenciais de segurança.</p>
+          
+          <form onsubmit="event.preventDefault(); executarRecuperacao();">
+            <div class="auth-form-group">
+              <label for="recuperarEmail">E-mail de Registo</label>
+              <input type="email" id="recuperarEmail" placeholder="exemplo@dominio.com" required>
+            </div>
+            <button type="submit" class="btn-primary" style="width: 100%;">Pesquisar Credenciais</button>
+          </form>
+
+          <div id="recuperarResultado" class="result-box" style="display: none;"></div>
+
+          <div class="auth-footer" style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border);">
+            <a href="#" onclick="switchAuthTab('login')">Voltar para o Login</a>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -570,12 +584,12 @@
         <div class="service-card" onclick="window.open('https://sigav.senami.gov.mz/', '_blank')">
           <div class="service-icon">✈️</div>
           <h3>Passaporte</h3>
-          <p>SENAMI. Pedido de passaportes e controlo de fluxo migratório de cidadãos nacionais.</p>
+          <p>SENAMI. Pedido de passaportes e controlo de fluxo migratório.</p>
         </div>
         <div class="service-card" onclick="window.open('https://www.balcaovirtual.inatro.gov.mz/', '_blank')">
           <div class="service-icon">🚗</div>
           <h3>Carta de Condução</h3>
-          <p>INATRO. Balcão Virtual para agendamentos, exames e renovação de títulos de condução.</p>
+          <p>INATRO. Balcão Virtual para agendamentos e renovação de títulos de condução.</p>
         </div>
       </div>
     </section>
@@ -626,7 +640,7 @@
 
           <div class="full-width">
             <label for="detalhes" style="font-weight:500; display:block; margin-bottom:6px;">Motivo e Informações Adicionais</label>
-            <textarea id="detalhes" placeholder="Explique brevemente o motivo da renovação (Ex: Caducidade, Extravio)..." rows="4" required></textarea>
+            <textarea id="detalhes" placeholder="Explique resumidamente o motivo..." rows="4" required></textarea>
           </div>
         </div>
 
@@ -639,28 +653,11 @@
 
     <section id="suporteArea" class="support-section" style="display: none;">
       <h3 style="color: var(--primary); font-size: 1.15rem; font-weight:600;">Suporte Técnico Institucional</h3>
-      <p style="font-size: 0.9rem; color: var(--text-main); margin-bottom: 12px;">Caso tenha problemas com dados específicos de uma das instituições, utilize os canais abaixo:</p>
-      
       <div class="support-grid">
-        <div class="support-item">
-          <h4>DNIC (B.I.)</h4>
-          <a href="https://www.dnic.gov.mz/" target="_blank">www.dnic.gov.mz</a>
-        </div>
-        <div class="support-item">
-          <h4>AT (NUIT)</h4>
-          <a href="https://www.at.gov.mz/" target="_blank">www.at.gov.mz</a>
-        </div>
-        <div class="support-item">
-          <h4>INATRO (Cartas)</h4>
-          <a href="https://www.balcaovirtual.inatro.gov.mz/" target="_blank">Balcão INATRO</a>
-        </div>
-        <div class="support-item">
-          <h4>SENAMI (Passaportes)</h4>
-          <a href="https://sigav.senami.gov.mz/" target="_blank">Portal SENAMI</a>
-        </div>
-      </div>
-      <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(0,0,0,0.05); font-size: 0.85rem; color: var(--text-muted);">
-        <strong>Atendimento Telefónico Centralizado:</strong> +258 84 4909293 | Segunda a Sexta-feira, 08:00h às 17:00h.
+        <div class="support-item"><h4>DNIC (B.I.)</h4><a href="https://www.dnic.gov.mz/" target="_blank">www.dnic.gov.mz</a></div>
+        <div class="support-item"><h4>AT (NUIT)</h4><a href="https://www.at.gov.mz/" target="_blank">www.at.gov.mz</a></div>
+        <div class="support-item"><h4>INATRO (Cartas)</h4><a href="https://www.balcaovirtual.inatro.gov.mz/" target="_blank">Balcão INATRO</a></div>
+        <div class="support-item"><h4>SENAMI (Passaportes)</h4><a href="https://sigav.senami.gov.mz/" target="_blank">Portal SENAMI</a></div>
       </div>
     </section>
 
@@ -673,60 +670,78 @@
   </footer>
 
   <script>
-    // Armazenamento global temporário para controle de callbacks do modal customizado
     let modalCallback = null;
 
-    // Inicialização e ciclo de vida da Aplicação
     document.addEventListener("DOMContentLoaded", () => {
       verificarSessao();
     });
 
+    // VERIFICAÇÃO SEGURO DA SESSÃO ATIVA
     function verificarSessao() {
       const isLogado = localStorage.getItem('logado') === 'true';
-      if (isLogado) {
-        const user = JSON.parse(localStorage.getItem('usuario'));
-        renderizarPortal(user ? user.nome : 'Cidadão');
+      const usuarioAtivo = localStorage.getItem('usuarioLogado');
+
+      if (isLogado && usuarioAtivo) {
+        renderizarPortal(usuarioAtivo);
       } else {
+        // Garante limpeza se o estado estiver corrompido
+        localStorage.removeItem('logado');
+        localStorage.removeItem('usuarioLogado');
         switchAuthTab('login');
       }
     }
 
-    // Gerenciador de Abas de Autenticação
+    // NAVEGAÇÃO ENTRE ABAS DO COMPONENTE DE AUTENTICAÇÃO
     function switchAuthTab(tab) {
       const tabLogin = document.getElementById("tabLogin");
       const tabCadastro = document.getElementById("tabCadastro");
       const loginView = document.getElementById("loginView");
       const cadastroView = document.getElementById("cadastroView");
+      const recuperarView = document.getElementById("recuperarView");
+      const tabsHeader = document.getElementById("authTabsHeader");
+
+      // Reset de visualização do painel de recuperação
+      document.getElementById("recuperarResultado").style.display = "none";
+      document.getElementById("recuperarResultado").innerHTML = "";
 
       if (tab === 'login') {
+        tabsHeader.style.display = "flex";
         tabLogin.classList.add("active");
         tabCadastro.classList.remove("active");
         loginView.style.display = "block";
         cadastroView.style.display = "none";
-      } else {
+        recuperarView.style.display = "none";
+      } else if (tab === 'cadastro') {
+        tabsHeader.style.display = "flex";
         tabLogin.classList.remove("active");
         tabCadastro.classList.add("active");
         loginView.style.display = "none";
         cadastroView.style.display = "block";
+        recuperarView.style.display = "none";
+      } else if (tab === 'recuperar') {
+        // Oculta abas superiores para focar na recuperação
+        tabsHeader.style.display = "none";
+        loginView.style.display = "none";
+        cadastroView.style.display = "none";
+        recuperarView.style.display = "block";
       }
     }
 
-    // Feedback Visual Avançado (Toast) substituindo alerts convencionais
+    // EXIBIÇÃO DE ALERTA DO SISTEMA (TOAST)
     function showToast(message, type = 'success') {
       const container = document.getElementById('toastContainer');
       const toast = document.createElement('div');
       toast.className = `toast ${type}`;
       toast.innerHTML = `<span>${message}</span>`;
-      
       container.appendChild(toast);
       
       setTimeout(() => {
         toast.style.animation = 'fadeIn 0.3s ease reverse forwards';
         setTimeout(() => toast.remove(), 300);
-      }, 4000);
+      }, 5000);
     }
 
-    // Visibilidade de Senhas
+    // VISIBILIDADE DAS PALAVRAS-PASSE
     function togglePasswordVisibility(inputId, element) {
       const input = document.getElementById(inputId);
       if(input.type === 'password') {
@@ -738,12 +753,7 @@
       }
     }
 
-    function recuperarSenha(e) {
-      e.preventDefault();
-      showToast("A recuperação de acesso requer chave móvel digital ou comparência física.", "error");
-    }
-
-    // Operações de Cadastro e Segurança de Dados
+    // REGISTO DE NOVOS CIDADÃOS
     function cadastrarUsuario() {
       const nome = document.getElementById('cadastroNome').value.trim();
       const email = document.getElementById('cadastroEmail').value.trim().toLowerCase();
@@ -751,52 +761,94 @@
       const confirmSenha = document.getElementById('cadastroConfirmPassword').value;
 
       if (!nome || !email || !senha || !confirmSenha) {
-        return showToast("Preencha todos os campos obrigatórios.", "error");
+        return showToast("Por favor, preencha todos os campos.", "error");
       }
       if (senha !== confirmSenha) {
-        return showToast("A confirmação de palavra-passe falhou.", "error");
+        return showToast("As palavras-passe introduzidas não coincidem.", "error");
       }
       if (senha.length < 6) {
-        return showToast("A palavra-passe deve conter pelo menos 6 caracteres.", "error");
+        return showToast("A palavra-passe deve ter no mínimo 6 caracteres.", "error");
       }
 
       const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
       if (usuarios.find(u => u.email === email)) {
-        return showToast("Este e-mail já se encontra registrado no sistema.", "error");
+        return showToast("Este endereço de e-mail já está registado.", "error");
       }
 
+      // Adiciona utilizador à base de dados local
       usuarios.push({ nome, email, senha });
       localStorage.setItem('usuarios', JSON.stringify(usuarios));
-      localStorage.setItem('logado', 'true');
-      localStorage.setItem('usuario', JSON.stringify({ nome }));
       
-      showToast("Conta criada e autenticada com sucesso!");
+      // Inicia sessão exclusivamente para este novo utilizador
+      localStorage.setItem('logado', 'true');
+      localStorage.setItem('usuarioLogado', nome); 
+      
+      showToast("Conta criada com sucesso! Sessão iniciada.");
       renderizarPortal(nome);
+      document.getElementById('cadastroNome').value = "";
+      document.getElementById('cadastroEmail').value = "";
+      document.getElementById('cadastroPassword').value = "";
+      document.getElementById('cadastroConfirmPassword').value = "";
     }
 
-    // Operação de Login
+    // LOGIN DO UTILIZADOR ATIVO (RESOLVE O BUG DO NOME FIXO)
     function fazerLogin() {
       const email = document.getElementById('loginEmail').value.trim().toLowerCase();
       const senha = document.getElementById('loginSenha').value;
 
       if (!email || !senha) {
-        return showToast("Introduza as suas credenciais.", "error");
+        return showToast("Introduza as suas credenciais de acesso.", "error");
       }
 
       const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
-      const usuarioValido = usuarios.find(u => u.email === email && u.senha === senha);
+      
+      // Procura rigorosamente o utilizador dono deste e-mail e senha
+      const utilizadorEncontrado = usuarios.find(u => u.email === email && u.senha === senha);
 
-      if (usuarioValido) {
+      if (utilizadorEncontrado) {
         localStorage.setItem('logado', 'true');
-        localStorage.setItem('usuario', JSON.stringify({ nome: usuarioValido.nome }));
-        showToast(`Bem-vindo de volta, ${usuarioValido.nome}`);
-        renderizarPortal(usuarioValido.nome);
+        localStorage.setItem('usuarioLogado', utilizadorEncontrado.nome); // Guarda o nome dinâmico real da pessoa
+        
+        showToast(`Sessão iniciada como ${utilizadorEncontrado.nome}`);
+        renderizarPortal(utilizadorEncontrado.nome);
+        
+        document.getElementById('loginEmail').value = "";
+        document.getElementById('loginSenha').value = "";
       } else {
         showToast("E-mail ou palavra-passe incorretos.", "error");
       }
     }
 
-    // Transição de telas de fluxo
+    // LOGICA DE RECUPERAÇÃO DE PALAVRA-PASSE
+    function executarRecuperacao() {
+      const emailInput = document.getElementById('recuperarEmail').value.trim().toLowerCase();
+      const boxResultado = document.getElementById('recuperarResultado');
+      
+      if (!emailInput) {
+        return showToast("Por favor, introduza o e-mail.", "error");
+      }
+
+      const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+      const conta = usuarios.find(u => u.email === emailInput);
+
+      boxResultado.style.display = "block";
+
+      if (conta) {
+        boxResultado.style.backgroundColor = "#ecfdf5";
+        boxResultado.style.borderColor = "#a7f3d0";
+        boxResultado.style.color = "#065f46";
+        boxResultado.innerHTML = `<strong>Conta Localizada!</strong><br>Olá, ${conta.nome}. A sua palavra-passe atual é: <b style="font-family:monospace; font-size:1.05rem;">${conta.senha}</b>`;
+        showToast("Credenciais recuperadas com sucesso.", "success");
+      } else {
+        boxResultado.style.backgroundColor = "#fef2f2";
+        boxResultado.style.borderColor = "#fca5a5";
+        boxResultado.style.color = "#991b1b";
+        boxResultado.innerHTML = `<strong>Erro de Localização:</strong> O e-mail informado não foi encontrado na base de dados do Portal.`;
+        showToast("E-mail não localizado.", "error");
+      }
+    }
+
+    // TRANSIÇÃO DE INTERFACE
     function renderizarPortal(nome) {
       document.getElementById("authSection").style.display = "none";
       document.getElementById("portalHeader").style.display = "block";
@@ -804,16 +856,11 @@
       document.getElementById("userNameDisplay").textContent = `Ligado como: ${nome}`;
     }
 
-    // Controle do bloco de suporte/FAQ
     function toggleSuporte() {
       const area = document.getElementById('suporteArea');
       area.style.display = area.style.display === 'none' ? 'block' : 'none';
-      if(area.style.display === 'block') {
-        area.scrollIntoView({ behavior: 'smooth' });
-      }
     }
 
-    // Gerenciador de Modais Customizados para substituição de Confirm nativos
     function abrirModalConfirmacao(conteudoHTML, callback) {
       document.getElementById('modalData').innerHTML = conteudoHTML;
       document.getElementById('confirmModal').style.display = 'flex';
@@ -828,10 +875,8 @@
       }
     }
 
-    // Orquestração de Envio de Formulários com Validação UI Integrada
     function orquestrarSolicitacao(event) {
       event.preventDefault();
-      
       const dados = {
         tipo: document.getElementById('tipoDocumento').value,
         nome: document.getElementById('nome').value.trim(),
@@ -842,32 +887,28 @@
       };
 
       const resumoHTML = `
-        <p style="margin-bottom: 8px;"><strong>Serviço Solicitado:</strong> ${dados.tipo}</p>
-        <p style="margin-bottom: 8px;"><strong>Requerente:</strong> ${dados.nome}</p>
-        <p style="margin-bottom: 8px;"><strong>Data de Nascimento:</strong> ${dados.nascimento}</p>
-        <p style="margin-bottom: 8px;"><strong>Género:</strong> ${dados.genero}</p>
-        <p style="margin-bottom: 8px;"><strong>Nacionalidade:</strong> ${dados.nacionalidade}</p>
-        <p><strong>Notas:</strong> ${dados.detalhes}</p>
+        <p><strong>Serviço:</strong> ${dados.tipo}</p>
+        <p><strong>Cidadão:</strong> ${dados.nome}</p>
+        <p><strong>Nascimento:</strong> ${dados.nascimento}</p>
+        <p><strong>Nacionalidade:</strong> ${dados.nacionalidade}</p>
       `;
 
       abrirModalConfirmacao(resumoHTML, (confirmado) => {
         if (confirmado) {
-          showToast("Requerimento submetido com sucesso ao balcão digital.");
+          showToast("Requerimento submetido com sucesso.");
           document.getElementById('solicitacaoForm').reset();
-        } else {
-          showToast("A submissão do pedido foi cancelada pelo utilizador.", "error");
         }
       });
     }
 
-    // Logout Seguro do Sistema
+    // TERMINAR SESSÃO COM LIMPEZA ESTRITA DO UTILIZADOR ATIVO
     function logout() {
       localStorage.removeItem('logado');
-      localStorage.removeItem('usuario');
-      showToast("Sessão terminada em segurança.");
+      localStorage.removeItem('usuarioLogado'); // Apaga apenas a sessão ativa e mantém o banco de dados
+      showToast("Sessão encerrada.");
       setTimeout(() => {
         location.reload();
-      }, 1000);
+      }, 800);
     }
   </script>
 </body>
