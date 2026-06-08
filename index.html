@@ -4,387 +4,871 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Governo Digital de Moçambique</title>
-  <link rel="shortcut icon" href="Jhon02.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
   <style>
+    /* ==========================================
+       RESET & VARIAVEIS GLOBAIS
+       ========================================== */
+    :root {
+      --bg-principal: #f8fafc;
+      --bg-card: #ffffff;
+      --primary: #0f172a;
+      --primary-light: #1e3a8a;
+      --accent: #10b981;
+      --accent-gold: #d97706;
+      --text-main: #334155;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 8px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+      --transition: all 0.25s ease-in-out;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(to right, #6a11cb, #2575fc);
-      color: white;
-      height: 100%;
-    }
-
-    input, select, textarea, button {
-      font-family: inherit;
-    }
-
-    h1, h2, h3 {
-      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-principal);
+      color: var(--text-main);
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
 
     a {
-      color: #aadfff;
+      color: var(--primary-light);
+      text-decoration: none;
+      transition: var(--transition);
+      font-weight: 500;
+    }
+
+    a:hover {
       text-decoration: underline;
+      color: var(--accent);
     }
 
-    .form-container {
-      background: rgba(0, 0, 0, 0.7);
-      padding: 30px;
-      border-radius: 10px;
-      max-width: 400px;
-      width: 90%;
-      margin: 80px auto;
-    }
-
-    label {
-      display: block;
-      margin-top: 10px;
-      margin-bottom: 5px;
-      font-weight: 600;
-    }
-
+    /* ==========================================
+       COMPONENTES REUTILIZÁVEIS (BOTÕES / INPUTS)
+       ========================================== */
     input, select, textarea {
       width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-      border: none;
-      border-radius: 6px;
-      background: #333;
-      color: white;
-      box-sizing: border-box;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background-color: #fff;
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 0.95rem;
+      transition: var(--transition);
     }
 
-    textarea {
-      resize: vertical;
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.15);
     }
 
     button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      background-color: #2575fc;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 12px 24px;
       border: none;
-      border-radius: 6px;
-      color: white;
-      font-weight: bold;
+      border-radius: var(--radius);
       cursor: pointer;
-      transition: 0.3s;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
 
-    button:hover {
-      background-color: #6a11cb;
+    .btn-primary {
+      background-color: var(--primary-light);
+      color: #fff;
     }
 
-    .toggle-buttons {
+    .btn-primary:hover {
+      background-color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      color: var(--text-main);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background-color: #f1f5f9;
+      border-color: var(--text-muted);
+    }
+
+    .btn-danger {
+      background-color: #ef4444;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background-color: #dc2626;
+    }
+
+    /* SISTEMA DE NOTIFICAÇÃO CUSTOMIZADO */
+    .toast-container {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      z-index: 9999;
+      max-width: 350px;
+      width: 100%;
+    }
+
+    .toast {
+      background: white;
+      padding: 16px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      border-left: 5px solid var(--primary-light);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      animation: slideIn 0.3s ease-out forwards;
+    }
+
+    .toast.success { border-left-color: var(--accent); }
+    .toast.error { border-left-color: #ef4444; }
+
+    /* ==========================================
+       LAYOUT - HEADER & FOOTER
+       ========================================== */
+    header {
+      background-color: var(--primary);
+      color: white;
+      padding: 16px 24px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
       display: flex;
       justify-content: space-between;
-      margin-bottom: 20px;
-    }
-
-    .link {
-      text-align: center;
-      margin-top: 10px;
-    }
-
-    .container {
-      display: none;
-      flex-direction: column;
       align-items: center;
-      padding: 40px 20px;
-      animation: fadeIn 0.8s ease-in-out;
-    }
-
-    .botoes-tratamento {
-      display: flex;
       flex-wrap: wrap;
-      gap: 15px;
+      gap: 16px;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-emblema {
+      width: 40px;
+      height: 40px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
       justify-content: center;
-      margin: 30px 0;
+      font-weight: bold;
+      color: white;
+      border: 2px solid var(--accent-gold);
     }
 
-    .botoes-tratamento button {
-      padding: 10px 20px;
-      font-size: 16px;
+    header h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
     }
 
-    .suporte-container {
-      background: rgba(0, 0, 0, 0.7);
-      padding: 25px;
-      border-radius: 10px;
-      width: 100%;
-      max-width: 700px;
-      margin-top: 40px;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    .user-menu {
+      display: flex;
+      align-items: center;
+      gap: 16px;
     }
 
-    .mostrar-suporte-btn {
-      padding: 12px 25px;
-      margin-top: 20px;
+    .user-info {
+      font-size: 0.9rem;
+      color: #cbd5e1;
     }
 
     footer {
-      background-color: rgba(0, 0, 0, 0.8);
-      color: white;
+      background-color: #0f172a;
+      color: #94a3b8;
       text-align: center;
-      padding: 20px;
-      position: fixed;
-      bottom: 0;
-      width: 100%;
+      padding: 24px;
+      font-size: 0.875rem;
+      border-top: 4px solid var(--accent);
+      margin-top: auto;
     }
 
-    header {
-      display: none;
-      background-color: rgba(0, 0, 0, 0.6);
-      padding: 20px;
+    /* ==========================================
+       TELA DE AUTENTICAÇÃO (LOGIN / CADASTRO)
+       ========================================== */
+    .auth-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .auth-card {
+      background-color: var(--bg-card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border);
+      width: 100%;
+      max-width: 440px;
+      overflow: hidden;
+      animation: fadeIn 0.4s ease-in-out;
+    }
+
+    .auth-tabs {
+      display: flex;
+      background-color: #f1f5f9;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .auth-tab {
+      flex: 1;
+      padding: 16px;
       text-align: center;
+      background: none;
+      border: none;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 2px solid transparent;
+      border-radius: 0;
+    }
+
+    .auth-tab:hover {
+      color: var(--primary);
+      background-color: #e2e8f0;
+    }
+
+    .auth-tab.active {
+      color: var(--primary-light);
+      background-color: var(--bg-card);
+      border-bottom: 2px solid var(--primary-light);
+    }
+
+    .auth-body {
+      padding: 32px;
+    }
+
+    .auth-form-group {
+      margin-bottom: 20px;
+    }
+
+    .auth-form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      font-size: 0.875rem;
+    }
+
+    .password-wrapper {
+      position: relative;
     }
 
     .toggle-password {
       position: absolute;
-      right: 10px;
+      right: 14px;
       top: 50%;
       transform: translateY(-50%);
       cursor: pointer;
-      color: #ccc;
-      font-size: 16px;
+      color: var(--text-muted);
       user-select: none;
     }
 
-    .toggle-password:hover {
-      color: white;
+    .auth-footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.875rem;
     }
 
-    .password-container {
-      position: relative;
+    /* ==========================================
+       PORTAL PRINCIPAL / DASHBOARD
+       ========================================== */
+    main.portal-container {
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 40px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
     }
 
+    .section-title {
+      font-size: 1.5rem;
+      color: var(--primary);
+      margin-bottom: 16px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Grade de Links de Acesso Rápido */
+    .quick-access-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .service-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+      cursor: pointer;
+    }
+
+    .service-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--primary-light);
+    }
+
+    .service-icon {
+      width: 48px;
+      height: 48px;
+      background-color: rgba(30, 58, 138, 0.08);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary-light);
+    }
+
+    .service-card h3 {
+      font-size: 1.1rem;
+      color: var(--primary);
+    }
+
+    .service-card p {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    /* Form Area & Grid de Inputs */
+    .form-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    @media(min-width: 768px) {
+      .form-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .full-width {
+        grid-column: span 2;
+      }
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    /* Suporte e FAQ */
+    .support-section {
+      background: #edf2f7;
+      border-radius: var(--radius);
+      padding: 24px;
+      border-left: 4px solid var(--accent-gold);
+    }
+
+    .support-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-top: 16px;
+    }
+
+    .support-item h4 {
+      font-size: 0.95rem;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    /* Modal de Confirmação */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-box {
+      background: white;
+      border-radius: var(--radius);
+      max-width: 500px;
+      width: 100%;
+      padding: 28px;
+      box-shadow: var(--shadow-lg);
+      animation: fadeIn 0.25s ease-out;
+    }
+
+    .modal-box h3 { margin-bottom: 16px; color: var(--primary); }
+    .modal-content { font-size: 0.95rem; margin-bottom: 24px; color: var(--text-main); }
+    .modal-buttons { display: flex; justify-content: flex-end; gap: 12px; }
+
+    /* Animações */
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
+      from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(50px); }
+      to { opacity: 1; transform: translateX(0); }
     }
   </style>
 </head>
 <body>
 
-  <!-- LOGIN/CADASTRO -->
-  <div class="form-container" id="auth">
-    <div class="toggle-buttons">
-      <button onclick="showCadastro()" id="cadastroButton">Cadastrar</button>
-      <button onclick="showLogin()" id="loginButton" style="display:none;">Login</button>
-    </div>
+  <div class="toast-container" id="toastContainer"></div>
 
-    <div id="cadastro" style="display: none;">
-      <h2>Cadastro</h2>
-      <form onsubmit="event.preventDefault(); cadastrarUsuario();">
-        <label for="cadastroNome">Nome Completo</label>
-        <input type="text" id="cadastroNome" placeholder="Nome Completo" required>
-
-        <label for="cadastroEmail">Email</label>
-        <input type="email" id="cadastroEmail" placeholder="Email" required>
-
-        <label for="cadastroPassword">Senha</label>
-        <div class="password-container">
-          <input type="password" id="cadastroPassword" placeholder="Senha" required>
-          <span class="toggle-password" onclick="togglePassword('cadastroPassword', this)">👁️</span>
-        </div>
-
-        <label for="cadastroConfirmPassword">Confirmar Senha</label>
-        <div class="password-container">
-          <input type="password" id="cadastroConfirmPassword" placeholder="Confirmar Senha" required>
-          <span class="toggle-password" onclick="togglePassword('cadastroConfirmPassword', this)">👁️</span>
-        </div>
-
-        <button type="submit">Cadastrar</button>
-      </form>
-    </div>
-
-    <div id="login">
-      <h2>Login</h2>
-      <form onsubmit="event.preventDefault(); fazerLogin();">
-        <label for="loginEmail">Email</label>
-        <input type="email" id="loginEmail" placeholder="Email" required>
-
-        <label for="loginSenha">Senha</label>
-        <div class="password-container">
-          <input type="password" id="loginSenha" placeholder="Senha" required>
-          <span class="toggle-password" onclick="togglePassword('loginSenha', this)">👁️</span>
-        </div>
-
-        <button type="submit">Entrar</button>
-      </form>
-    </div>
-
-    <div class="link">
-      <a href="#" onclick="recuperarSenha()">Esqueceu a senha?</a>
+  <div class="modal-overlay" id="confirmModal">
+    <div class="modal-box">
+      <h3>Confirmar Dados do Pedido</h3>
+      <div class="modal-content" id="modalData"></div>
+      <div class="modal-buttons">
+        <button class="btn-secondary" onclick="fecharModal(false)">Cancelar</button>
+        <button class="btn-primary" onclick="fecharModal(true)">Confirmar e Enviar</button>
+      </div>
     </div>
   </div>
 
-  <!-- PORTAL DE SERVIÇOS -->
-  <header id="portalHeader">
-    <h1 id="boasVindas">Bem-vindo ao Governo Digital de Moçambique</h1>
+  <header id="portalHeader" style="display: none;">
+    <div class="header-container">
+      <div class="logo-area">
+        <div class="logo-emblema">🇲🇿</div>
+        <h1 id="boasVindas">Governo Digital de Moçambique</h1>
+      </div>
+      <div class="user-menu">
+        <span class="user-info" id="userNameDisplay">---</span>
+        <button class="btn-danger" style="padding: 8px 16px; font-size: 0.85rem;" onclick="logout()">Sair</button>
+      </div>
+    </div>
   </header>
 
-  <div class="container" id="portal">
-    <div class="botoes-tratamento">
-      <button onclick="window.open('https://www.dnic.gov.mz/', '_blank')">Tratar BI</button>
-      <button onclick="window.open('https://www.at.gov.mz/', '_blank')">Tratar NUIT</button>
-      <button onclick="window.open('https://sigav.senami.gov.mz/', '_blank')">Tratar Passaporte</button>
-      <button onclick="window.open('https://www.balcaovirtual.inatro.gov.mz/', '_blank')">Tratar Carta de Condução</button>
+  <div class="auth-wrapper" id="authSection">
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')">Entrar</button>
+        <button class="auth-tab" id="tabCadastro" onclick="switchAuthTab('cadastro')">Criar Conta</button>
+      </div>
+      
+      <div class="auth-body">
+        <div id="loginView">
+          <form onsubmit="event.preventDefault(); fazerLogin();">
+            <div class="auth-form-group">
+              <label for="loginEmail">E-mail Institucional ou Cidadão</label>
+              <input type="email" id="loginEmail" placeholder="exemplo@dominio.com" required>
+            </div>
+            <div class="auth-form-group">
+              <label for="loginSenha">Palavra-passe</label>
+              <div class="password-wrapper">
+                <input type="password" id="loginSenha" placeholder="Digite sua senha" required>
+                <span class="toggle-password" onclick="togglePasswordVisibility('loginSenha', this)">👁️</span>
+              </div>
+            </div>
+            <button type="submit" class="btn-primary" style="width: 100%; margin-top: 8px;">Autenticar no Portal</button>
+          </form>
+          <div class="auth-footer">
+            <a href="#" onclick="recuperarSenha(event)">Esqueceu a palavra-passe?</a>
+          </div>
+        </div>
+
+        <div id="cadastroView" style="display: none;">
+          <form onsubmit="event.preventDefault(); cadastrarUsuario();">
+            <div class="auth-form-group">
+              <label for="cadastroNome">Nome Completo</label>
+              <input type="text" id="cadastroNome" placeholder="Como consta no BI" required>
+            </div>
+            <div class="auth-form-group">
+              <label for="cadastroEmail">Endereço de E-mail</label>
+              <input type="email" id="cadastroEmail" placeholder="nome@provedor.com" required>
+            </div>
+            <div class="auth-form-group">
+              <label for="cadastroPassword">Palavra-passe</label>
+              <div class="password-wrapper">
+                <input type="password" id="cadastroPassword" placeholder="Mínimo 6 caracteres" required>
+                <span class="toggle-password" onclick="togglePasswordVisibility('cadastroPassword', this)">👁️</span>
+              </div>
+            </div>
+            <div class="auth-form-group">
+              <label for="cadastroConfirmPassword">Confirmar Palavra-passe</label>
+              <div class="password-wrapper">
+                <input type="password" id="cadastroConfirmPassword" placeholder="Repita a senha" required>
+                <span class="toggle-password" onclick="togglePasswordVisibility('cadastroConfirmPassword', this)">👁️</span>
+              </div>
+            </div>
+            <button type="submit" class="btn-primary" style="width: 100%;">Criar Conta Governamental</button>
+          </form>
+        </div>
+      </div>
+    </div>
   </div>
 
-    <p style="text-align: center; max-width: 700px;">Você será redirecionado para os sites oficiais das instituições do Governo de Moçambique.</p>
+  <main class="portal-container" id="portalSection" style="display: none;">
+    
+    <section>
+      <div class="section-title">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+        Emissão de Documentação Oficial (Plataformas Externas)
+      </div>
+      
+      <div class="quick-access-grid">
+        <div class="service-card" onclick="window.open('https://www.dnic.gov.mz/', '_blank')">
+          <div class="service-icon">👤</div>
+          <h3>Tratar B.I.</h3>
+          <p>Direcção Nacional de Identificação Civil. Agendamento e emissão de Bilhete de Identidade.</p>
+        </div>
+        <div class="service-card" onclick="window.open('https://www.at.gov.mz/', '_blank')">
+          <div class="service-icon">📄</div>
+          <h3>Tratar NUIT</h3>
+          <p>Autoridade Tributária de Moçambique. Inscrição e obtenção do Número de Identificação Tributária.</p>
+        </div>
+        <div class="service-card" onclick="window.open('https://sigav.senami.gov.mz/', '_blank')">
+          <div class="service-icon">✈️</div>
+          <h3>Passaporte</h3>
+          <p>SENAMI. Pedido de passaportes e controlo de fluxo migratório de cidadãos nacionais.</p>
+        </div>
+        <div class="service-card" onclick="window.open('https://www.balcaovirtual.inatro.gov.mz/', '_blank')">
+          <div class="service-icon">🚗</div>
+          <h3>Carta de Condução</h3>
+          <p>INATRO. Balcão Virtual para agendamentos, exames e renovação de títulos de condução.</p>
+        </div>
+      </div>
+    </section>
 
-    <div class="form-container">
-      <h2>Renovar Documento</h2>
-      <form id="solicitacaoForm" onsubmit="enviarSolicitacao(event)">
-        <label for="tipoDocumento">Tipo de Documento</label>
-        <select id="tipoDocumento" required>
-          <option value="">Selecione o tipo de documento</option>
-          <option value="NUIT">NUIT</option>
-          <option value="BI">Bilhete de Identidade</option>
-          <option value="Carta de Condução">Carta de Condução</option>
-          <option value="Passaporte">Passaporte</option>
-        </select>
+    <section class="form-card">
+      <div class="section-title">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        Requerimento Unificado de Renovação
+      </div>
+      
+      <form id="solicitacaoForm" onsubmit="orquestrarSolicitacao(event)">
+        <div class="form-grid">
+          <div>
+            <label for="tipoDocumento" style="font-weight:500; display:block; margin-bottom:6px;">Tipo de Documento</label>
+            <select id="tipoDocumento" required>
+              <option value="">Selecione o documento...</option>
+              <option value="NUIT">NUIT</option>
+              <option value="BI">Bilhete de Identidade (B.I.)</option>
+              <option value="Carta de Condução">Carta de Condução</option>
+              <option value="Passaporte">Passaporte</option>
+            </select>
+          </div>
 
-        <label for="nome">Nome Completo</label>
-        <input type="text" id="nome" placeholder="Digite seu nome completo" required>
+          <div>
+            <label for="nome" style="font-weight:500; display:block; margin-bottom:6px;">Nome Completo</label>
+            <input type="text" id="nome" placeholder="Nome completo do requerente" required>
+          </div>
 
-        <label for="dataNascimento">Data de Nascimento</label>
-        <input type="date" id="dataNascimento" required>
+          <div>
+            <label for="dataNascimento" style="font-weight:500; display:block; margin-bottom:6px;">Data de Nascimento</label>
+            <input type="date" id="dataNascimento" required>
+          </div>
 
-        <label for="genero">Gênero</label>
-        <select id="genero" required>
-          <option value="">Selecione seu gênero</option>
-          <option value="Masculino">Masculino</option>
-          <option value="Feminino">Feminino</option>
-          <option value="Outro">Outro</option>
-        </select>
+          <div>
+            <label for="genero" style="font-weight:500; display:block; margin-bottom:6px;">Género</label>
+            <select id="genero" required>
+              <option value="">Selecione...</option>
+              <option value="Masculino">Masculino</option>
+              <option value="Feminino">Feminino</option>
+              <option value="Outro">Outro</option>
+            </select>
+          </div>
 
-        <label for="nacionalidade">Nacionalidade</label>
-        <input type="text" id="nacionalidade" placeholder="Ex: Moçambicana" required>
+          <div class="full-width">
+            <label for="nacionalidade" style="font-weight:500; display:block; margin-bottom:6px;">Nacionalidade</label>
+            <input type="text" id="nacionalidade" placeholder="Ex: Moçambicana" required>
+          </div>
 
-        <label for="detalhes">Informações Adicionais</label>
-        <textarea id="detalhes" placeholder="Informe detalhes relevantes" rows="4" required></textarea>
+          <div class="full-width">
+            <label for="detalhes" style="font-weight:500; display:block; margin-bottom:6px;">Motivo e Informações Adicionais</label>
+            <textarea id="detalhes" placeholder="Explique brevemente o motivo da renovação (Ex: Caducidade, Extravio)..." rows="4" required></textarea>
+          </div>
+        </div>
 
-        <button type="submit">Enviar Solicitação</button>
-        <button type="button" class="mostrar-suporte-btn" onclick="mostrarSuporte()">Suporte Técnico</button>
-         <button onclick="logout()">Sair</button>
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">Submeter Requerimento</button>
+          <button type="button" class="btn-secondary" onclick="toggleSuporte()">Central de Ajuda</button>
+        </div>
       </form>
-    </div>
+    </section>
 
-    <div id="suporte" class="suporte-container" style="display: none;">
-      <h3>Suporte Técnico</h3>
-      <ul>
-        <li><strong>BI:</strong> <a href="https://www.dnic.gov.mz/" target="_blank">www.dnic.gov.mz</a></li>
-        <li><strong>NUIT:</strong> <a href="https://www.at.gov.mz/" target="_blank">www.at.gov.mz</a></li>
-        <li><strong>Carta:</strong> <a href="https://www.balcaovirtual.inatro.gov.mz/" target="_blank">INATRO</a></li>
-        <li><strong>Passaporte:</strong> <a href="https://sigav.senami.gov.mz/" target="_blank">SENAMI</a></li>
-      </ul>
-      <p><strong>Horário:</strong> Segunda a Sexta-feira, 8h–17h</p>
-      <p><strong>Telefone:</strong> +258 84 4909293</p>
-    </div>
-  </div>
+    <section id="suporteArea" class="support-section" style="display: none;">
+      <h3 style="color: var(--primary); font-size: 1.15rem; font-weight:600;">Suporte Técnico Institucional</h3>
+      <p style="font-size: 0.9rem; color: var(--text-main); margin-bottom: 12px;">Caso tenha problemas com dados específicos de uma das instituições, utilize os canais abaixo:</p>
+      
+      <div class="support-grid">
+        <div class="support-item">
+          <h4>DNIC (B.I.)</h4>
+          <a href="https://www.dnic.gov.mz/" target="_blank">www.dnic.gov.mz</a>
+        </div>
+        <div class="support-item">
+          <h4>AT (NUIT)</h4>
+          <a href="https://www.at.gov.mz/" target="_blank">www.at.gov.mz</a>
+        </div>
+        <div class="support-item">
+          <h4>INATRO (Cartas)</h4>
+          <a href="https://www.balcaovirtual.inatro.gov.mz/" target="_blank">Balcão INATRO</a>
+        </div>
+        <div class="support-item">
+          <h4>SENAMI (Passaportes)</h4>
+          <a href="https://sigav.senami.gov.mz/" target="_blank">Portal SENAMI</a>
+        </div>
+      </div>
+      <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(0,0,0,0.05); font-size: 0.85rem; color: var(--text-muted);">
+        <strong>Atendimento Telefónico Centralizado:</strong> +258 84 4909293 | Segunda a Sexta-feira, 08:00h às 17:00h.
+      </div>
+    </section>
 
-  <footer>© Todos os direitos reservados – Governo de Moçambique.</footer>
+  </main>
+
+  <footer>
+    <div style="max-width: 1200px; margin:0 auto; padding:0 20px;">
+      &copy; 2026 Portal do Governo de Moçambique. Todos os direitos reservados.
+    </div>
+  </footer>
 
   <script>
-    function showCadastro() {
-      document.getElementById("cadastro").style.display = "block";
-      document.getElementById("login").style.display = "none";
-      document.getElementById("cadastroButton").style.display = "none";
-      document.getElementById("loginButton").style.display = "inline-block";
+    // Armazenamento global temporário para controle de callbacks do modal customizado
+    let modalCallback = null;
+
+    // Inicialização e ciclo de vida da Aplicação
+    document.addEventListener("DOMContentLoaded", () => {
+      verificarSessao();
+    });
+
+    function verificarSessao() {
+      const isLogado = localStorage.getItem('logado') === 'true';
+      if (isLogado) {
+        const user = JSON.parse(localStorage.getItem('usuario'));
+        renderizarPortal(user ? user.nome : 'Cidadão');
+      } else {
+        switchAuthTab('login');
+      }
     }
 
-    function showLogin() {
-      document.getElementById("cadastro").style.display = "none";
-      document.getElementById("login").style.display = "block";
-      document.getElementById("cadastroButton").style.display = "inline-block";
-      document.getElementById("loginButton").style.display = "none";
+    // Gerenciador de Abas de Autenticação
+    function switchAuthTab(tab) {
+      const tabLogin = document.getElementById("tabLogin");
+      const tabCadastro = document.getElementById("tabCadastro");
+      const loginView = document.getElementById("loginView");
+      const cadastroView = document.getElementById("cadastroView");
+
+      if (tab === 'login') {
+        tabLogin.classList.add("active");
+        tabCadastro.classList.remove("active");
+        loginView.style.display = "block";
+        cadastroView.style.display = "none";
+      } else {
+        tabLogin.classList.remove("active");
+        tabCadastro.classList.add("active");
+        loginView.style.display = "none";
+        cadastroView.style.display = "block";
+      }
     }
 
-    function recuperarSenha() {
-      alert("Funcionalidade de recuperação de senha ainda não implementada.");
+    // Feedback Visual Avançado (Toast) substituindo alerts convencionais
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.innerHTML = `<span>${message}</span>`;
+      
+      container.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.animation = 'fadeIn 0.3s ease reverse forwards';
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
     }
 
+    // Visibilidade de Senhas
+    function togglePasswordVisibility(inputId, element) {
+      const input = document.getElementById(inputId);
+      if(input.type === 'password') {
+        input.type = 'text';
+        element.textContent = '🙈';
+      } else {
+        input.type = 'password';
+        element.textContent = '👁️';
+      }
+    }
+
+    function recuperarSenha(e) {
+      e.preventDefault();
+      showToast("A recuperação de acesso requer chave móvel digital ou comparência física.", "error");
+    }
+
+    // Operações de Cadastro e Segurança de Dados
     function cadastrarUsuario() {
       const nome = document.getElementById('cadastroNome').value.trim();
       const email = document.getElementById('cadastroEmail').value.trim().toLowerCase();
       const senha = document.getElementById('cadastroPassword').value;
       const confirmSenha = document.getElementById('cadastroConfirmPassword').value;
 
-      if (!nome || !email || !senha || !confirmSenha) return alert("Preencha todos os campos");
-      if (senha !== confirmSenha) return alert("As senhas não coincidem");
+      if (!nome || !email || !senha || !confirmSenha) {
+        return showToast("Preencha todos os campos obrigatórios.", "error");
+      }
+      if (senha !== confirmSenha) {
+        return showToast("A confirmação de palavra-passe falhou.", "error");
+      }
+      if (senha.length < 6) {
+        return showToast("A palavra-passe deve conter pelo menos 6 caracteres.", "error");
+      }
 
       const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
-      if (usuarios.find(u => u.email === email)) return alert("Este email já está cadastrado!");
+      if (usuarios.find(u => u.email === email)) {
+        return showToast("Este e-mail já se encontra registrado no sistema.", "error");
+      }
 
       usuarios.push({ nome, email, senha });
       localStorage.setItem('usuarios', JSON.stringify(usuarios));
       localStorage.setItem('logado', 'true');
       localStorage.setItem('usuario', JSON.stringify({ nome }));
-      acessarPortal(nome);
+      
+      showToast("Conta criada e autenticada com sucesso!");
+      renderizarPortal(nome);
     }
 
+    // Operação de Login
     function fazerLogin() {
       const email = document.getElementById('loginEmail').value.trim().toLowerCase();
       const senha = document.getElementById('loginSenha').value;
 
-      if (!email || !senha) return alert("Preencha todos os campos");
+      if (!email || !senha) {
+        return showToast("Introduza as suas credenciais.", "error");
+      }
 
       const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
-      const usuario = usuarios.find(u => u.email === email && u.senha === senha);
+      const usuarioValido = usuarios.find(u => u.email === email && u.senha === senha);
 
-      if (usuario) {
+      if (usuarioValido) {
         localStorage.setItem('logado', 'true');
-        localStorage.setItem('usuario', JSON.stringify({ nome: usuario.nome }));
-        acessarPortal(usuario.nome);
+        localStorage.setItem('usuario', JSON.stringify({ nome: usuarioValido.nome }));
+        showToast(`Bem-vindo de volta, ${usuarioValido.nome}`);
+        renderizarPortal(usuarioValido.nome);
       } else {
-        alert("Email ou senha incorretos!");
+        showToast("E-mail ou palavra-passe incorretos.", "error");
       }
     }
 
-    function acessarPortal(nome) {
-      document.getElementById("auth").style.display = "none";
-      document.getElementById("portal").style.display = "flex";
+    // Transição de telas de fluxo
+    function renderizarPortal(nome) {
+      document.getElementById("authSection").style.display = "none";
       document.getElementById("portalHeader").style.display = "block";
-      document.getElementById("boasVindas").textContent = `Bem-vindo ao Governo Digital de Moçambique, ${nome}`;
+      document.getElementById("portalSection").style.display = "flex";
+      document.getElementById("userNameDisplay").textContent = `Ligado como: ${nome}`;
     }
 
-    function mostrarSuporte() {
-      const suporte = document.getElementById('suporte');
-      suporte.style.display = suporte.style.display === 'none' ? 'block' : 'none';
+    // Controle do bloco de suporte/FAQ
+    function toggleSuporte() {
+      const area = document.getElementById('suporteArea');
+      area.style.display = area.style.display === 'none' ? 'block' : 'none';
+      if(area.style.display === 'block') {
+        area.scrollIntoView({ behavior: 'smooth' });
+      }
     }
 
-    function enviarSolicitacao(event) {
+    // Gerenciador de Modais Customizados para substituição de Confirm nativos
+    function abrirModalConfirmacao(conteudoHTML, callback) {
+      document.getElementById('modalData').innerHTML = conteudoHTML;
+      document.getElementById('confirmModal').style.display = 'flex';
+      modalCallback = callback;
+    }
+
+    function fecharModal(resposta) {
+      document.getElementById('confirmModal').style.display = 'none';
+      if(modalCallback) {
+        modalCallback(resposta);
+        modalCallback = null;
+      }
+    }
+
+    // Orquestração de Envio de Formulários com Validação UI Integrada
+    function orquestrarSolicitacao(event) {
       event.preventDefault();
-      const tipoDocumento = document.getElementById('tipoDocumento').value;
-      const nome = document.getElementById('nome').value.trim();
-      const dataNascimento = document.getElementById('dataNascimento').value;
-      const genero = document.getElementById('genero').value;
-      const nacionalidade = document.getElementById('nacionalidade').value.trim();
-      const detalhes = document.getElementById('detalhes').value.trim();
+      
+      const dados = {
+        tipo: document.getElementById('tipoDocumento').value,
+        nome: document.getElementById('nome').value.trim(),
+        nascimento: document.getElementById('dataNascimento').value,
+        genero: document.getElementById('genero').value,
+        nacionalidade: document.getElementById('nacionalidade').value.trim(),
+        detalhes: document.getElementById('detalhes').value.trim()
+      };
 
-      const confirmacao = confirm(`📄 Tipo: ${tipoDocumento}\n👤 Nome: ${nome}\n📅 Nascimento: ${dataNascimento}\n⚥ Gênero: ${genero}\n🌍 Nacionalidade: ${nacionalidade}\n📝 Detalhes: ${detalhes}`);
-      if (!confirmacao) return alert("❌ Solicitação cancelada.");
+      const resumoHTML = `
+        <p style="margin-bottom: 8px;"><strong>Serviço Solicitado:</strong> ${dados.tipo}</p>
+        <p style="margin-bottom: 8px;"><strong>Requerente:</strong> ${dados.nome}</p>
+        <p style="margin-bottom: 8px;"><strong>Data de Nascimento:</strong> ${dados.nascimento}</p>
+        <p style="margin-bottom: 8px;"><strong>Género:</strong> ${dados.genero}</p>
+        <p style="margin-bottom: 8px;"><strong>Nacionalidade:</strong> ${dados.nacionalidade}</p>
+        <p><strong>Notas:</strong> ${dados.detalhes}</p>
+      `;
 
-      alert("✅ Solicitação enviada com sucesso!");
-      document.getElementById('solicitacaoForm').reset();
+      abrirModalConfirmacao(resumoHTML, (confirmado) => {
+        if (confirmado) {
+          showToast("Requerimento submetido com sucesso ao balcão digital.");
+          document.getElementById('solicitacaoForm').reset();
+        } else {
+          showToast("A submissão do pedido foi cancelada pelo utilizador.", "error");
+        }
+      });
     }
+
+    // Logout Seguro do Sistema
     function logout() {
-  localStorage.clear();
-  location.reload();
-}
-
-
-    function togglePassword(id, el) {
-      const input = document.getElementById(id);
-      const isHidden = input.type === 'password';
-      input.type = isHidden ? 'text' : 'password';
-      el.textContent = isHidden ? '🙈' : '👁️';
+      localStorage.removeItem('logado');
+      localStorage.removeItem('usuario');
+      showToast("Sessão terminada em segurança.");
+      setTimeout(() => {
+        location.reload();
+      }, 1000);
     }
-
-    // Exibir tela de login por padrão
-    showLogin();
   </script>
 </body>
 </html>
